@@ -68,9 +68,7 @@ public class OpenfileListener implements ActionListener{
 			playVideo();
 		} catch (Exception e1) {
 			try {
-				System.out.println("11111");
 				player = Manager.createPlayer(loc);
-				System.out.println("222222");
 				playAudio();
 			} catch (Exception e2) {
 				if(globalParam.getIsAudioOrVideoPlayer() == 0){
@@ -121,6 +119,15 @@ public class OpenfileListener implements ActionListener{
 	
 	public void playAudio(){
 		globalParam.setIsAudioOrVideoPlayer(1);
-		player.realize(); 
+		player.realize();
+		Component control = null;
+		Dimension size = null;
+		try{			
+			control = player.getControlPanelComponent();
+		}catch(Exception ex){		
+		}
+		
+		frame.add(control,BorderLayout.CENTER);
+		player.start(); 
 	}
 }
