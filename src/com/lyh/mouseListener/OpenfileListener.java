@@ -119,15 +119,6 @@ public class OpenfileListener implements ActionListener{
 	
 	public void playAudio(){
 		globalParam.setIsAudioOrVideoPlayer(1);
-		player.realize();
-		Component control = null;
-		Dimension size = null;
-		try{			
-			control = player.getControlPanelComponent();
-		}catch(Exception ex){		
-		}
-		
-		frame.add(control,BorderLayout.CENTER);
 		player.start(); 
 	}
 }
