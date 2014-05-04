@@ -133,5 +133,6 @@ public class OpenfileListener implements ActionListener{
 		player.start(); 
 		
 		sta = 0;  //调整为视频播放状态，就可以改变窗口状态
+		frame.show();
 	}
 }
