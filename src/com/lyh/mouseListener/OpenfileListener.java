@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.media.CannotRealizeException;
+import javax.media.Control;
 import javax.media.IncompatibleSourceException;
 import javax.media.Manager;
 import javax.media.MediaLocator;
@@ -20,13 +21,14 @@ import javax.media.protocol.DataSource;
 import javax.swing.JFrame;
 
 import com.lyh.bean.GlobalParameter;
+import com.sun.media.PlaybackEngine;
 
 public class OpenfileListener implements ActionListener{
 	private JFrame frame;
 	private GlobalParameter globalParam;
 	private Player player;
-	private int width;
-	private int height;
+	private int width = 300;
+	private int height = 300;
 	private int sta = 0;
 	
 	public OpenfileListener(JFrame frame,GlobalParameter globalParam) {
@@ -49,18 +51,18 @@ public class OpenfileListener implements ActionListener{
 		
 		MediaLocator loc = new MediaLocator(globalParam.getMediaFile().getPath());
 		if(player == null){
-			player = globalParam.getPlayer();
+//			player = globalParam.getPlayer();
 		}else{
 			player.close();
 			if(globalParam.getIsAudioOrVideoPlayer() == 0){
 				
 			}else if(globalParam.getIsAudioOrVideoPlayer() == 1){
-		
+				frame.remove(globalParam.getControl());
 			}else if(globalParam.getIsAudioOrVideoPlayer() == 2){
 				frame.remove(globalParam.getVisual());
 				frame.remove(globalParam.getControl());
 			}
-			player = globalParam.getPlayer();
+//			player = globalParam.getPlayer();
 		}
 		
 		try {
@@ -68,12 +70,13 @@ public class OpenfileListener implements ActionListener{
 			playVideo();
 		} catch (Exception e1) {
 			try {
-				player = Manager.createPlayer(loc);
+				player = Manager.createRealizedPlayer(loc);
 				playAudio();
 			} catch (Exception e2) {
 				if(globalParam.getIsAudioOrVideoPlayer() == 0){
 					
 				}else if(globalParam.getIsAudioOrVideoPlayer() == 1){
+					frame.remove(globalParam.getControl());
 					globalParam.setIsAudioOrVideoPlayer(0);
 				}else if(globalParam.getIsAudioOrVideoPlayer() == 2){
 					frame.remove(globalParam.getVisual());
@@ -84,6 +87,8 @@ public class OpenfileListener implements ActionListener{
 		} 
 	}
 	
+	
+	//播放视频方法
 	public void playVideo(){	
 		globalParam.setIsAudioOrVideoPlayer(2);
 		globalParam.setPlayer(player);
@@ -117,8 +122,16 @@ public class OpenfileListener implements ActionListener{
 		globalParam.getPlayer().start();
 	}
 	
+	//播放音频
 	public void playAudio(){
 		globalParam.setIsAudioOrVideoPlayer(1);
+		player.realize();
+		Component control = player.getControlPanelComponent();
+		frame.add(control);
+		frame.setSize(width, 100);
+		globalParam.setControl(control);
 		player.start(); 
+		
+		sta = 0;  //调整为视频播放状态，就可以改变窗口状态
 	}
 }
